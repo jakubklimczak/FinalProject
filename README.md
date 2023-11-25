@@ -1,12 +1,12 @@
-<h1 style="text-align: center;">Final Project - Jakub Klimczak</h1>
+# Final Project - Jakub Klimczak
+**Silesian University of Technology**
+**Analysis of brain MRI using deep learning**
 
-# Silesian University of Technology
-# Analysis of brain MRI using deep learning
 The final project for engineering degree - **Informatics**
 
 Prepared to work on Ubuntu **22.04.3** on WSL2, not guaranteed to work in a different environment and I discourage you to try.
 
 Setup (if you want to train the model yourself): 
-1. Download the dataset using ./download_kaggle_dataset.sh in resources folder
-2. Install python and libraries from requirements.txt in the main project folder
-3. Install CUDA, Cuda Toolkit, cuDNN, TensorRT
+1. Download the dataset using ./download_kaggle_dataset.sh in resources folder (run it as sudo).
+2. Install python and libraries from requirements.txt in the main project folder: pip install -r requirements.txt
+3. Install CUDA, Cuda Toolkit, cuDNN, TensorRT. They are necessary for Tensorflow to run on GPU. If you wish to run it on CPU, you can omit this step, however some further setup might be required on your part, the requirements.txt libraries are all with GPU in mind. For help refer to Nvidia's manual pages, it's all well documented. To select correct versions, refer to https://docs.nvidia.com/deeplearning/cudnn/support-matrix/index.html
