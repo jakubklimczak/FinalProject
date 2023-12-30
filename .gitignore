@@ -161,3 +161,7 @@ cython_debug/
 
 resources/dataset/test
 resources/dataset/train
+code/debug_output.txt
+
+*.Identifier
+*.zip
