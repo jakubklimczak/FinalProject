@@ -37,14 +37,15 @@ def load_dicom_image_and_preprocess_for_tf(file_path):
             dicom_data = pydicom.dcmread(file)
             image_array = dicom_data.pixel_array
             uin8_image_array = exposure.rescale_intensity(image_array, in_range='uint16', out_range='uint8')
-            print("Converted the image: " + file_path)
+            #print("Converted the image: " + file_path)
             return uin8_image_array
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
         return None
     finally:
         file.close()
-        if images_processed%1000==0:
+        if images_processed%30==0:
+            print("Garbage collect")
             gc.collect()
             
 
