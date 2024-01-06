@@ -165,3 +165,6 @@ code/debug_output.txt
 
 *.Identifier
 *.zip
+*.deb
+*.pub
+*.gpg
