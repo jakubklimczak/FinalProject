@@ -168,3 +168,4 @@ code/debug_output.txt
 *.deb
 *.pub
 *.gpg
+*.png

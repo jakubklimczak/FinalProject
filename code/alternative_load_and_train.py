@@ -2,22 +2,52 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from skimage import exposure
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import pydicom
 import gc
+import psutil
 
 # Global variables
 images_processed = 0
 
 # Load your CSV file
-csv_path = '/home/jaklimczak/envs/FinalProject/resources/dataset/train_labels.csv'
+csv_path = '../resources/dataset/train_labels.csv'
 df = pd.read_csv(csv_path)
-training_directory = '/home/jaklimczak/envs/FinalProject/resources/dataset/train'
+training_directory = '../resources/dataset/train'
 
 train_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
 
-def load_dicom_images(folder_name, target_size=(512, 512)):
+#DEBUG
+def print_memory_usage():
+    # Get the current memory usage
+    memory_info = psutil.virtual_memory()
+
+    # Print the memory information
+    print(f"Total: {memory_info.total} bytes")
+    print(f"Available: {memory_info.available} bytes")
+    print(f"Used: {memory_info.used} bytes")
+    print(f"Percentage Used: {memory_info.percent}%")
+    print("")
+#END DEBUG
+
+def close_all_files():
+    # Get the list of process IDs associated with the current Python process
+    process = psutil.Process()
+    current_pid = process.pid
+
+    # Iterate over open files and close them
+    for fd in process.open_files():
+        try:
+            # Check if the file is associated with the current Python process
+            if fd.pid == current_pid:
+                # Close the file
+                fd.fileobj.close()
+        except Exception as e:
+            print(f"Error closing file: {e}")
+
+def load_dicom_images(folder_name):
     folder_path = os.path.join(training_directory, str(folder_name).zfill(5))
     global images_processed
     images_processed += 1
@@ -37,27 +67,18 @@ def load_dicom_images(folder_name, target_size=(512, 512)):
                     pixel_array = dicom_data.pixel_array
 
                     # Pad or truncate to target size
-                    if pixel_array.shape[0] < target_size[0]:
-                        pad_size = target_size[0] - pixel_array.shape[0]
-                        pixel_array = np.pad(pixel_array, ((0, pad_size), (0, 0)), mode='constant')
-                    elif pixel_array.shape[0] > target_size[0]:
-                        pixel_array = pixel_array[:target_size[0], :]
+                    uin8_image_array = exposure.rescale_intensity(pixel_array, in_range='uint16', out_range='uint8')
 
-                    if pixel_array.shape[1] < target_size[1]:
-                        pad_size = target_size[1] - pixel_array.shape[1]
-                        pixel_array = np.pad(pixel_array, ((0, 0), (0, pad_size)), mode='constant')
-                    elif pixel_array.shape[1] > target_size[1]:
-                        pixel_array = pixel_array[:, :target_size[1]]
-
-                    images.append(pixel_array)
+                    images.append(uin8_image_array)
 
         return np.array(images)
     except Exception as e:
         print(f"Error processing file {filename}: {e}")
         return None
     finally:
-        dicom_data.close()
+        close_all_files()
         if images_processed%30==0:
+            print_memory_usage()
             print("Garbage collect")
             gc.collect()
             images_processed=0

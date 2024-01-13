@@ -15,9 +15,20 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from skimage import exposure
 from tqdm import tqdm
+import psutil
 
 # Global variables
 images_processed = 0
+
+#DEBUG
+def print_memory_usage():
+    memory_info = psutil.virtual_memory()
+    print(f"Total: {memory_info.total} bytes")
+    print(f"Available: {memory_info.available} bytes")
+    print(f"Used: {memory_info.used} bytes")
+    print(f"Percentage Used: {memory_info.percent}%")
+    print("")
+#END DEBUG
 
 # ImageDataGenerator works really slowly and I want to see if it is working or not - this shows a progress bar while preparing the generator.
 class CustomDataFrameGenerator(ImageDataGenerator):
@@ -44,15 +55,14 @@ def load_dicom_image_and_preprocess_for_tf(file_path):
         return None
     finally:
         file.close()
-        if images_processed%30==0:
-            print("Garbage collect")
-            gc.collect()
+        if images_processed%1500==0:
+            print_memory_usage()
             
 
 # Directory paths
-train_dir = '/home/jaklimczak/envs/FinalProject/resources/dataset/train'
-test_dir = '/home/jaklimczak/envs/FinalProject/resources/dataset/test'
-label_csv_dir = "/home/jaklimczak/envs/FinalProject/resources/dataset/train_labels.csv"
+train_dir = '../resources/dataset/train'
+test_dir = '../resources/dataset/test'
+label_csv_dir = "../resources/dataset/train_labels.csv"
 
 # Constants
 image_size = (512, 512) # all images should be this size already - that's why I abandoned most image checks in my code. If you encounter an issues, keep in mind to rescale images to 512x512
