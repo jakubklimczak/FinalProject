@@ -169,3 +169,5 @@ code/debug_output.txt
 *.pub
 *.gpg
 *.png
+debug_output.txt
+*.h5
