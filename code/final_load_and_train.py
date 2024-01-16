@@ -11,6 +11,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.callbacks import CSVLogger
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 physical_devices = tf.config.list_physical_devices('GPU')
 for device in physical_devices:
@@ -65,7 +66,7 @@ for fold, (train_indices, val_indices) in enumerate(kfold.split(df['BraTS21ID'],
 
     # building a model
     model = Sequential([
-        Conv2D(32, (3, 3), activation='relu', input_shape=(size1dim, size1dim, 3)),
+        Conv2D(64, (3, 3), activation='relu', input_shape=(size1dim, size1dim, 3)),
         MaxPooling2D((2, 2)),
         Flatten(),
         Dense(128, activation='relu'),
@@ -85,7 +86,7 @@ for fold, (train_indices, val_indices) in enumerate(kfold.split(df['BraTS21ID'],
     current_datetime = datetime.now()
     formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
     with open(root_path+'fold_output.txt', 'a') as file:
-        file.write(f'{formatted_datetime} - Fold {fold + 1} - Validation Accuracy: {validation_accuracy}')
+        file.write(f'{formatted_datetime} - Fold {fold + 1} - Validation Accuracy: {validation_accuracy}\n')
 
     model_save_path = resources_path + f"model_fold_{fold + 1}.h5"
     model.save(model_save_path)
@@ -95,4 +96,9 @@ for fold, (train_indices, val_indices) in enumerate(kfold.split(df['BraTS21ID'],
     with open(history_save_path, 'w') as file:
         file.write(str(history.history))
     print(f"Training history for fold {fold + 1} saved to {history_save_path}")
+
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='test')
+    plt.legend()
+    plt.show()
 

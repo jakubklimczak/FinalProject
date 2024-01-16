@@ -1,0 +1,5 @@
+2024-01-14 14:28:22 - Fold 1 - Validation Accuracy: 0.8069096207618713
+2024-01-14 16:31:34 - Fold 2 - Validation Accuracy: 0.8052719235420227
+2024-01-14 18:35:18 - Fold 3 - Validation Accuracy: 0.8058025240898132
+2024-01-14 20:41:05 - Fold 4 - Validation Accuracy: 0.8070359230041504
+2024-01-14 22:45:55 - Fold 5 - Validation Accuracy: 0.8025326728820801
