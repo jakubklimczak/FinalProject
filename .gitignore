@@ -161,7 +161,11 @@ cython_debug/
 
 resources/dataset/test
 resources/dataset/train
+resources/dataset/BraTS2021_Training_Data
+resources/weights/*
 code/debug_output.txt
+code/legacy
+code/gitcode.py
 
 *.Identifier
 *.zip

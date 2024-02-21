@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from functools import reduce
 from glob import glob
+import cv2
 
 # reading in dicom files
 import pydicom
@@ -74,14 +75,16 @@ def largest_label_volume(im, bg=-1):
 
 def segment_brain_mask(image, fill_brain_structures=True):
     # Adjust intensity threshold for brain
-    threshold = np.mean(image) * 0.1
+    threshold = 500
     print(threshold)
 
     binary_image = np.array(image >= threshold, dtype=np.int8) + 1
-    print(binary_image[binary_image>2])
+    print(binary_image[binary_image == 1])
 
     labels, num_features = ndimage.label(binary_image)
-    print(binary_image[binary_image>2])
+    print(binary_image[binary_image == 1])
+    print(labels)
+    print(num_features)
 
     background_label = labels[0, 0, 0]
     binary_image[background_label == labels] = 2
@@ -104,6 +107,9 @@ def segment_brain_mask(image, fill_brain_structures=True):
     if l_max is not None:
         binary_image[labels != l_max] = 0
 
+    plt.imshow(binary_image[80], cmap=plt.cm.bone)
+    plt.savefig('binary_image.png')  
+    plt.close()
     return binary_image
 
 
@@ -122,9 +128,12 @@ data_paths = glob(patient_folder + '/*/*.dcm')
 patient_dicom = load_scan(data_paths)
 patient_pixels = get_pixels(patient_dicom)
 #sanity check
+plt.hist(patient_pixels[80].ravel(),256)
+plt.savefig('output_hist.png') 
+plt.close()
 plt.imshow(patient_pixels[80], cmap=plt.cm.bone)
 plt.savefig('output_plot.png')  
-
+plt.close()
 
 segmented_brain = segment_brain_mask(patient_pixels, fill_brain_structures=False)
 segmented_brain_fill = segment_brain_mask(patient_pixels, fill_brain_structures=True)

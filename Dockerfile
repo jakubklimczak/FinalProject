@@ -10,12 +10,17 @@ RUN pip install --upgrade pip
 RUN apt-get update
 RUN apt-get install -y libdbus-1-dev libglib2.0-dev \
     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
+RUN apt-get update && apt-get install libgl1 -y
 RUN apt-get update && \
     apt-get install -y x11-apps
 RUN pip install pydicom
 RUN pip install scikit-image
 RUN pip install matplotlib
 RUN pip install ipywidgets
+RUN pip install opencv-python
+RUN pip install tables
+RUN pip install nibabel
 RUN pip install -r /FinalProjectDOCKER/requirements.txt
 
 ENV DISPLAY=:0
